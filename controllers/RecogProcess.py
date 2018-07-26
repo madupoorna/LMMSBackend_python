@@ -10,6 +10,7 @@ class RecognizeContent:
 
         face_count = 0
         file_count = 0
+        code_count = 0
         file_count_in_dir = 0
         ide_list = []
 
@@ -33,10 +34,18 @@ class RecognizeContent:
 
                 # detect ide
                 print("Identifying IDE...")
-                ide = detect_ide(directory + file)  # using text recognition
-                # ide = recognize_ide(directory + file) # using machine learning
+                # ide = detect_ide(directory + file)  # using text recognition
+                ide = recognize_ide(directory + file)  # using machine learning
 
-                if ide != 'no':
+                # detect code visibility
+                print("code visibility...")
+                if file_count <= (file_count_in_dir / 100) * 35:
+                    print("Identifying code visibility in " + file)
+                    has_code = True
+                    if has_code:
+                        code_count += 1
+
+                if ide[0] != 'no':
                     if ide not in ide_list:
                         ide_list.append(ide)
 
@@ -45,6 +54,7 @@ class RecognizeContent:
 
         print("face count", face_count)
         print("file count ", file_count)
+        print("code count", code_count)
         print("ide list", ide_list)
 
-        return face_count, file_count, ide_list
+        return face_count, file_count, ide_list, code_count

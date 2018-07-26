@@ -7,12 +7,12 @@ from models.DataModel import DataModel
 
 class Process:
 
-    def start_process(user_id, links):
+    def start_process(process_id, links):
 
-        video_download_path = "./videos/" + user_id
-        video_split_path = "./videos/" + user_id + "/images"
-        casc_path = "haarcascade_frontalface_default.xml"
-        data_list = []
+        video_download_path = "./videos/" + process_id
+        video_split_path = "./videos/" + process_id + "/images"
+        cascade_path = "haarcascade_frontalface_default.xml"
+        data_list = {}
 
         if not os.path.exists(video_split_path):
             os.makedirs(video_split_path, 0o777)
@@ -23,15 +23,46 @@ class Process:
             # split and remove frames
             SplitAndRemove.start_splitting(video_id, video_download_path)
             # start recognize process
-            params = RecognizeContent.start_recog(video_split_path + "/" + video_id + "_images/", casc_path)
+            params = RecognizeContent.start_recog(video_split_path + "/" + video_id + "_images/",
+                                                  cascade_path)  # face_count, file_count, ide_list, code_count
 
             obj = DataModel()
-            if (params[1] / 100) * 35 > params[0]:
-                obj.presenter_visibility = True
+
+            if (params[1] / 100) * 35 > params[0]:  # more than 35% of video
+                obj.presenter_visibility = 'True'
             else:
-                obj.presenter_visibility = False
-            obj.code_visibility = True
-            obj.ide_list = params[2]
+                obj.presenter_visibility = 'False'
+
+            if 'eclipse' in params[2]:
+                obj.filter4 = True
+            else:
+                obj.filter4 = False
+            if 'intellij' in params[2]:
+                obj.filter5 = True
+            else:
+                obj.filter5 = False
+            if 'visual_studio' in params[2]:
+                obj.filter6 = True
+            else:
+                obj.filter6 = False
+            if 'net_beans' in params[2]:
+                obj.filter7 = True
+            else:
+                obj.filter7 = False
+            if 'vs_code' in params[2]:
+                obj.filter8 = True
+            else:
+                obj.filter8 = False
+            if 'android_studio' in params[2]:
+                obj.filter9 = True
+            else:
+                obj.filter9 = False
+
+            if (params[1] / 100) * 35 > params[3]:  # more than 35% of video
+                obj.code_visibility = 'True'
+            else:
+                obj.code_visibility = 'False'
+
             data_list[video_id] = obj
 
         print("data list ", data_list)

@@ -45,8 +45,8 @@ def load_labels(label_file):
     return label
 
 
-def recognize_ide(file):
-    file_name = file  # "images/vscode.jpeg"
+def recognize_ide():
+    file_name = "images/eclipse.png"
     model_file = "retrained_graph.pb"
     label_file = "retrained_labels.txt"
     input_height = 224
@@ -77,11 +77,14 @@ def recognize_ide(file):
     # top_k = results.argsort()[-5:][::-1]
     labels = load_labels(label_file)
 
-    (m, i) = max((v, i) for i, v in enumerate(results))
-    ide = labels[i]
+    (m, i) = max((v, i) for i, v in enumerate(results))  # m = score
+    ide = labels[i], m
 
-    # print('\nEvaluation time (1-image): {:.3f}s\n'.format(end - start))
     # template = "{} (score={:0.5f})"
     # for i in top_k:
-    #     print(template.format(labels[i], results[i]))i
+    #     print(template.format(labels[i], results[i]))
+
+    if m < 0.8:
+        ide = 'no', 0
+
     return ide
