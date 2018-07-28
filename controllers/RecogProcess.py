@@ -1,7 +1,7 @@
-from controllers.RecFaces import RecognizeFaces
-from controllers.DetectIDE import detect_ide
-from controllers.tensor.manage import recognize_ide
 import os
+
+from controllers.RecFaces import RecognizeFaces
+from controllers.tensor.manage import recognize_ide
 
 
 class RecognizeContent:
@@ -26,26 +26,24 @@ class RecognizeContent:
             if file.endswith(".jpg"):
 
                 # detect faces
-                if file_count <= (file_count_in_dir / 100) * 35:
-                    print("Identifying faces in " + file)
-                    has_face = RecognizeFaces.detect_face(file, cascade_path)
+                if face_count <= (file_count_in_dir / 100) * 35:
+                    has_face = RecognizeFaces.detect_face(directory, file, cascade_path)
                     if has_face:
                         face_count += 1
 
                 # detect ide
-                print("Identifying IDE...")
+                print("Identifying IDE in " + file)
                 # ide = detect_ide(directory + file)  # using text recognition
                 ide = recognize_ide(directory + file)  # using machine learning
 
                 # detect code visibility
-                print("code visibility...")
-                if file_count <= (file_count_in_dir / 100) * 35:
+                if code_count <= (file_count_in_dir / 100) * 35:
                     print("Identifying code visibility in " + file)
                     has_code = True
                     if has_code:
                         code_count += 1
 
-                if ide[0] != 'no':
+                if ide != 'no':
                     if ide not in ide_list:
                         ide_list.append(ide)
 

@@ -1,12 +1,11 @@
-from bson import json_util
-from flask import Flask, request
 import threading
 
+from flask import Flask, request
+import requests
 from pandas.io.json import json
-from bson import ObjectId
 
 from controllers.MongoClient import MongoClient
-from controllers.downloadVideos import Process
+from controllers.Process import Process
 from models.ReturnModel import ReturnModel
 
 app = Flask(__name__)
@@ -31,18 +30,22 @@ def check_process():
 def start_process():
     mongo_url = app.config['MONGODB_URL']
     process = MongoClient.getProcesses(mongo_url)
-    if process != 'None':
+    print("process ", process)
 
-        MongoClient.updateProcesses(str(process.get("_id")), mongo_url, "2")
-        obj = Process.start_process(str(process.get("_id")), process.get("linksList"))
-        MongoClient.insertVideo(mongo_url, obj)
-        MongoClient.updateProcesses(str(process.get("_id")), mongo_url, "0")
+    if process is not None:
+        MongoClient.updateProcesses(process.get("_id"), mongo_url, "2")
+        Process.start_process(str(process.get("_id")), process.get("linksList"), mongo_url)
+        MongoClient.updateProcesses(process.get("_id"), mongo_url, "0")
 
-        obj = ReturnModel()
-        obj.process_id = str(process.get("_id"))
+        #  {"urlList":["https://www.youtube.com/watch?v=zdYPQH7aR8k"]}
+        urlList = {"urlList": process.get("linksList")}
 
-        request.post('http://localhost:8080/api/index/create', json=obj)
+        print("urlList", urlList)
+
+        requests.post(url='192.168.12.1:8080/api/index/create', data=urlList)
+
+        print("post sent")
 
 
 if __name__ == '__main__':
-    app.run('localhost', 5000, True)
+    app.run('192.168.154.129', 5000, True)

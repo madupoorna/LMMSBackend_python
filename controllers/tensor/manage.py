@@ -45,10 +45,10 @@ def load_labels(label_file):
     return label
 
 
-def recognize_ide():
-    file_name = "images/eclipse.png"
-    model_file = "retrained_graph.pb"
-    label_file = "retrained_labels.txt"
+def recognize_ide(file):
+    file_name = file #"images/eclipse.png"
+    model_file = "/home/lab/Desktop/LMMSBackend_python/controllers/tensor/retrained_graph.pb"
+    label_file = "/home/lab/Desktop/LMMSBackend_python/controllers/tensor/retrained_labels.txt"
     input_height = 224
     input_width = 224
     input_mean = 128
@@ -77,14 +77,15 @@ def recognize_ide():
     # top_k = results.argsort()[-5:][::-1]
     labels = load_labels(label_file)
 
+    # for max score
     (m, i) = max((v, i) for i, v in enumerate(results))  # m = score
-    ide = labels[i], m
+    ide = labels[i]
 
     # template = "{} (score={:0.5f})"
     # for i in top_k:
     #     print(template.format(labels[i], results[i]))
 
     if m < 0.8:
-        ide = 'no', 0
+        ide = 'no'
 
     return ide
