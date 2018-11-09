@@ -6,7 +6,7 @@ class MongoClient:
     @staticmethod
     def getConnection(url):
         mongodb_client = pymongo.MongoClient(url)
-        database = mongodb_client["videos_mongodb_db"]
+        database = mongodb_client["ResourceDB"]
         return database
 
     @staticmethod
