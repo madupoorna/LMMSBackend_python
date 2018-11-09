@@ -7,7 +7,7 @@ from controllers.Utils import Service, encode_image
 def detect_codes(image_file):
     print("Identifying code visibility in " + image_file)
 
-    access_token = "AIzaSyCLCVwYnNNbOFUPByzQAJ143FNgLCxy8MY"
+    access_token = ""
     service = Service('vision', 'v1', access_token=access_token)
 
     code = False
