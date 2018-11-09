@@ -43,7 +43,7 @@ def start_process():
         print("urlList", json_data)
         headers = {'Content-Type': 'application/json'}
 
-        requests.post(url='http://localhost:8080/api/index/create', headers=headers, data=json_data)
+        requests.post(url='http://35.237.239.190:8080/api/index/create', headers=headers, data=json_data)
         print("post sent")
 
 
