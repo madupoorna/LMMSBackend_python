@@ -45,10 +45,11 @@ def load_labels(label_file):
     return label
 
 
-def recognize_ide(file):
-    file_name = file #"images/eclipse.png"
-    model_file = "/home/lab/Desktop/LMMSBackend_python/controllers/tensor/retrained_graph.pb"
-    label_file = "/home/lab/Desktop/LMMSBackend_python/controllers/tensor/retrained_labels.txt"
+def recognize_ide(file, ROOT_DIR):
+    print("Identifying IDE in " + file)
+    file_name = file  # "images/eclipse.png"
+    model_file = ROOT_DIR + "/controllers/tensor/retrained_graph.pb"
+    label_file = ROOT_DIR + "/controllers/tensor/retrained_labels.txt"
     input_height = 224
     input_width = 224
     input_mean = 128

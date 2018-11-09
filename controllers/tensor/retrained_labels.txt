@@ -2,3 +2,5 @@ vscode
 android studio
 eclipse
 intellij
+netbeans
+visual studio

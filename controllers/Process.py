@@ -13,13 +13,14 @@ class Process:
 
     def start_process(process_id, links, mongo_url):
 
-        video_download_path = "/home/lab/Desktop/LMMSBackend_python/videos/" + process_id
-        video_split_path = "/home/lab/Desktop/LMMSBackend_python/videos/" + process_id + "/images"
-        cascade_path = "/home/lab/Desktop/LMMSBackend_python/haarcascade_frontalface_default.xml"
+        dir_path = os.path.abspath('')
+        ROOT_DIR = dir_path
+        video_download_path = ROOT_DIR + "/videos/" + process_id + "/"
+        cascade_path = ROOT_DIR + "/haarcascade_frontalface_default.xml"
 
-        if not os.path.exists(video_split_path):
+        if not os.path.exists(video_download_path):
             try:
-                os.makedirs(video_split_path)
+                os.makedirs(video_download_path)
             except OSError as e:
                 print(str(e))
                 if e.errno != errno.EEXIST:
@@ -31,27 +32,26 @@ class Process:
 
             # download youtube videos
             Process.download_youtube_video(video_download_path, video_id)
-            # split and remove frames
+
+            # split and remove duplicate frames
             SplitAndRemove.start_splitting(video_id, video_download_path)
+
             # start recognize process
-            params = RecognizeContent.start_recog(video_split_path + "/" + video_id + "_images/",
-                                                  cascade_path)  # face_count, file_count, ide_list, code_count
+            params = RecognizeContent.start_recog(video_download_path + "/" + video_id + "_images/", cascade_path,
+                                                  ROOT_DIR)
+            # face_visibility, code_visibility, ide_list
+
+            print(params)
 
             obj = DataModel()
 
             obj.videoUrl = id
 
             # presenter visibility
-            if (params[1] / 100) * 35 <= params[0]:  # more than 35% of video
-                obj.filter2 = True
-            else:
-                obj.filter2 = False
+            obj.filter2 = params[0]
 
             # code visibility
-            if (params[1] / 100) * 35 <= params[3]:  # more than 35% of video
-                obj.filter3 = True
-            else:
-                obj.filter3 = False
+            obj.filter3 = params[1]
 
             # ide using
             if 'eclipse' in params[2]:
@@ -83,6 +83,6 @@ class Process:
 
     def download_youtube_video(file_path, id):
         print("Downloading https://www.youtube.com/watch?v=" + id + " ....")
-        url = "https://www.youtube.com/watch?v="+id
+        url = "https://www.youtube.com/watch?v=" + id
         yt = YouTube(url)
-        yt.streams.filter(res="480p", only_video=True, file_extension="mp4").first().download(file_path, id)
+        yt.streams.filter(res="360p", only_video=True, file_extension="mp4").first().download(file_path, id)

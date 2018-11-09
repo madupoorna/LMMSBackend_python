@@ -1,4 +1,5 @@
 import base64
+
 import requests
 
 
@@ -16,3 +17,7 @@ class Service(object):
 def encode_image(image):
     image_content = image.read()
     return base64.b64encode(image_content).decode()
+
+
+text_formatted = """ import java.util.*;
+            PUBLIC CLASS Tuna implements Runnable {}"""

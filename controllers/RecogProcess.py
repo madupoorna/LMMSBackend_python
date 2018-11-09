@@ -1,58 +1,57 @@
 import os
 
+from controllers.DetectCode import detect_codes
 from controllers.RecFaces import RecognizeFaces
 from controllers.tensor.manage import recognize_ide
 
 
 class RecognizeContent:
 
-    def start_recog(directory, cascade_path):
+    def start_recog(images_folder, cascade_path, ROOT_DIR):
 
         face_count = 0
-        file_count = 0
+        # file_count = 0
         code_count = 0
-        file_count_in_dir = 0
+        face_visibility = False
+        code_visibility = False
+        # file_count_in_dir = 0
         ide_list = []
 
-        # get total file count
-        for file in os.listdir(directory):
-            if file.endswith('.jpg'):
-                file_count_in_dir += 1
+        # # get total file count
+        # for file in os.listdir(images_folder):
+        #     if file.endswith('.jpg'):
+        #         file_count_in_dir += 1
 
         # loop over the images
-        for file in os.listdir(directory):
-            file_count += 1
+        for file in os.listdir(images_folder):
+            # file_count += 1
             file = os.fsdecode(file)
             if file.endswith(".jpg"):
 
                 # detect faces
-                if face_count <= (file_count_in_dir / 100) * 35:
-                    has_face = RecognizeFaces.detect_face(directory, file, cascade_path)
-                    if has_face:
+                if face_count < 1:
+                    if RecognizeFaces.detect_face(images_folder, file, cascade_path):
                         face_count += 1
+                        face_visibility = True
 
                 # detect ide
-                print("Identifying IDE in " + file)
-                # ide = detect_ide(directory + file)  # using text recognition
-                ide = recognize_ide(directory + file)  # using machine learning
+                # using text recognition
+                # ide = detect_ide(directory + file)
+
+                # using machine learning
+                ide = recognize_ide(images_folder + file, ROOT_DIR)
+                if ide != 'no':
+                    ide_list.append(ide)
 
                 # detect code visibility
-                if code_count <= (file_count_in_dir / 100) * 35:
-                    print("Identifying code visibility in " + file)
-                    has_code = True
-                    if has_code:
+                # using text recognition
+                if code_count < 1:
+                    if detect_codes(images_folder + file):
                         code_count += 1
-
-                if ide != 'no':
-                    if ide not in ide_list:
-                        ide_list.append(ide)
-
+                        code_visibility = True
             else:
                 continue
 
-        print("face count", face_count)
-        print("file count ", file_count)
-        print("code count", code_count)
-        print("ide list", ide_list)
+        ide = max(ide_list, key=ide_list.count).strip()
 
-        return face_count, file_count, ide_list, code_count
+        return face_visibility, code_visibility, ide
